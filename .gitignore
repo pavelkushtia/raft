@@ -1,0 +1,31 @@
+# Bazel build artifacts
+bazel-*
+bazel-out/
+bazel-bin/
+bazel-genfiles/
+bazel-testlogs/
+
+# IDE specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build artifacts
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+
+# Test artifacts
+*.gcda
+*.gcno
+*.gcov
+
+# Temporary files
+*.tmp
+*.log
+*.pid
+*.seed
+*.pid.lock 

@@ -13,6 +13,7 @@ SSTable::SSTable(const std::string& path,
       size_(0),
       bloom_filter_(std::make_unique<BloomFilter>(entries.size() * 10, 3)) {
     WriteToDisk(entries);
+    size_ = std::filesystem::file_size(path_);
 }
 
 SSTable::SSTable(const std::string& path)
@@ -20,6 +21,7 @@ SSTable::SSTable(const std::string& path)
       level_(0),
       size_(0) {
     ReadFromDisk();
+    size_ = std::filesystem::file_size(path_);
 }
 
 void SSTable::WriteToDisk(const std::vector<std::pair<std::string, std::string>>& entries) {
@@ -60,7 +62,6 @@ void SSTable::WriteToDisk(const std::vector<std::pair<std::string, std::string>>
     file.write(reinterpret_cast<const char*>(&bloom_size), sizeof(bloom_size));
     file.write(bloom_data.data(), bloom_size);
 
-    size_ = std::filesystem::file_size(path_);
     if (!index_.empty()) {
         smallest_key_ = index_.front().key;
         largest_key_ = index_.back().key;
@@ -108,7 +109,6 @@ void SSTable::ReadFromDisk() {
     file.read(&bloom_data[0], bloom_size);
     bloom_filter_ = BloomFilter::Deserialize(bloom_data);
 
-    size_ = std::filesystem::file_size(path_);
     if (!index_.empty()) {
         smallest_key_ = index_.front().key;
         largest_key_ = index_.back().key;

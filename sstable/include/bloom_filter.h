@@ -4,6 +4,7 @@
 #include <vector>
 #include <bitset>
 #include <functional>
+#include <memory>
 
 namespace sstable {
 
