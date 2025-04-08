@@ -17,11 +17,13 @@ SSTables are immutable, sorted files that store key-value pairs. This implementa
 ```
 sstable/
 ├── include/           # Header files
+│   ├── bloom_filter.h # Bloom filter implementation
 │   ├── memtable.h     # MemTable implementation
 │   ├── sstable.h      # SSTable implementation
 │   ├── compaction.h   # Compaction strategy
 │   └── lsm_tree.h     # LSM Tree implementation
 ├── src/              # Source files
+│   ├── bloom_filter.cpp
 │   ├── memtable.cpp
 │   ├── sstable.cpp
 │   ├── compaction.cpp
@@ -33,7 +35,7 @@ sstable/
 │   └── lsm_tree_test.cpp
 ├── examples/         # Example usage
 │   └── main.cpp
-└── CMakeLists.txt    # Build configuration
+└── BUILD            # Bazel build configuration
 ```
 
 ## Key Components
@@ -65,42 +67,46 @@ sstable/
 
 ### Prerequisites
 - C++17 or later
-- CMake 3.10 or later
-- Google Test (for unit tests)
+- Bazel 8.0 or later
+- Google Test (automatically downloaded by Bazel)
 
 ### Build Instructions
 ```bash
-mkdir build
-cd build
-cmake ..
-make
-```
+# Build all targets
+bazel build //sstable:all
 
-### Running Tests
-```bash
-cd build
-ctest
+# Run all tests
+bazel test //sstable:all
+
+# Build and run specific target
+bazel build //sstable:sstable
+bazel test //sstable:sstable_test
 ```
 
 ### Example Usage
 ```cpp
-#include "lsm_tree.h"
+#include "sstable/include/sstable.h"
 
 int main() {
-    LSMTree db("/tmp/sstable");
+    std::vector<std::pair<std::string, std::string>> entries = {
+        {"key1", "value1"},
+        {"key2", "value2"}
+    };
     
-    // Write operations
-    db.Put("key1", "value1");
-    db.Put("key2", "value2");
+    // Create a new SSTable
+    sstable::SSTable sstable("/tmp/test.sst", entries, 0);
     
     // Read operations
     std::string value;
-    if (db.Get("key1", &value)) {
+    if (sstable.Get("key1", &value)) {
         std::cout << "Value: " << value << std::endl;
     }
     
-    // Delete operation
-    db.Delete("key2");
+    // Range query
+    auto range = sstable.GetRange("key1", "key2");
+    for (const auto& [key, value] : range) {
+        std::cout << key << ": " << value << std::endl;
+    }
     
     return 0;
 }
@@ -145,4 +151,4 @@ The project includes comprehensive unit tests for all components:
 - Backup and restore functionality
 
 ## License
-MIT License
+MIT License 
