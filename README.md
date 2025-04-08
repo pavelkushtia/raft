@@ -1,0 +1,2 @@
+# raft
+Simplistic raft implementation
