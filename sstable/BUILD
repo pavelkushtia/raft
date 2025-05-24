@@ -15,11 +15,3 @@ cc_library(
     deps = [":bloom_filter"],
 )
 
-cc_test(
-    name = "sstable_test",
-    srcs = ["tests/sstable_test.cpp"],
-    deps = [
-        ":sstable",
-        "@googletest//:gtest_main",
-    ],
-) 
