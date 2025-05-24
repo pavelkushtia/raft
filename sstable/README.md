@@ -71,6 +71,16 @@ sstable/
 - Google Test (automatically downloaded by Bazel)
 
 ### Build Instructions
+#### Installing Bazel
+```bash
+sudo apt update
+sudo apt install curl unzip -y
+curl -Lo bazelisk https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-amd64
+chmod +x bazelisk
+sudo mv bazelisk /usr/local/bin/bazel
+bazel version
+```
+
 ```bash
 # Build all targets
 bazel build //sstable:all
@@ -80,7 +90,7 @@ bazel test //sstable:all
 
 # Build and run specific target
 bazel build //sstable:sstable
-bazel test //sstable:sstable_test
+bazel test //sstable/test:sstable_test
 ```
 
 ### Example Usage
